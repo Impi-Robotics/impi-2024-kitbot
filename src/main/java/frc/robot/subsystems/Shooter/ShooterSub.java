@@ -25,8 +25,15 @@ public class ShooterSub extends SubsystemBase {
   private RelativeEncoder ShooterEncoder;
 
   public ShooterSub() {
-    ShooterMotorMaster = new CANSparkMax(2, MotorType.kBrushless);
-    ShooterMotorFollower = new CANSparkMax(3, MotorType.kBrushless);
+    this.ShooterMotorMaster = ShooterMotorMaster;
+    this.ShooterMotorFollower = ShooterMotorFollower;
+    this.ShooterPIDController = ShooterPIDController;
+    this.ShooterEncoder = ShooterEncoder;
+
+    ShooterMotorMaster = new CANSparkMax(1, MotorType.kBrushless);
+    ShooterMotorFollower = new CANSparkMax(2, MotorType.kBrushless);
+
+    ShooterPIDController = ShooterMotorMaster.getPIDController();
 
     ShooterMotorMaster.restoreFactoryDefaults();
     ShooterMotorFollower.restoreFactoryDefaults();
@@ -38,8 +45,8 @@ public class ShooterSub extends SubsystemBase {
     ShooterMotorFollower.follow(ShooterMotorMaster, true);
 
     ShooterEncoder = ShooterMotorMaster.getEncoder();
-    ShooterEncoder.setPositionConversionFactor(0);
-    ShooterEncoder.setVelocityConversionFactor(0);
+    // ShooterEncoder.setPositionConversionFactor(0);
+    // ShooterEncoder.setVelocityConversionFactor(0);
 
     ShooterPIDController.setOutputRange(0, 1);
 
@@ -58,11 +65,12 @@ public class ShooterSub extends SubsystemBase {
   }
 
   public void shoot5000() {
-    ShooterPIDController.setReference(5000/*5000rpm?*/, ControlType.kSmartVelocity);
+    ShooterPIDController.setReference(1000/*5000rpm?*/, ControlType.kVelocity);
   }
 
   public void shoot(double rpm) {
-    ShooterPIDController.setReference(rpm, ControlType.kSmartVelocity);
+    ShooterMotorMaster.set(0.5);
+    // ShooterPIDController.setReference(rpm, ControlType.kVelocity);
   }
 
   public void stop() {

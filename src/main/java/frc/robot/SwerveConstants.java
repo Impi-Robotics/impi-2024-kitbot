@@ -45,8 +45,8 @@ public final class SwerveConstants {
 
     public static class CONVERSION {
         //TODO Find whatever these are for the wheels
-        public static final double DRIVE_ROTATIONS_TO_METERS = 0.0;
-        public static final double DRIVE_RPM_TO_MPS = 0.0;
+        public static final double DRIVE_ROTATIONS_TO_METERS = 1.0;
+        public static final double DRIVE_RPM_TO_MPS = 1.0;
         public static final double TURN_CLICKS_TO_RADIANS = (2 * Math.PI);
         public static final double TURN_RPM_TO_RPS = (2 * Math.PI) / 60;
 
@@ -70,6 +70,7 @@ public final class SwerveConstants {
             new Translation2d(-WHEEL_BASE / 2, TRACK_WIDTH / 2),
             new Translation2d(-WHEEL_BASE / 2, -TRACK_WIDTH / 2));
         public static final boolean GYRO_REVERSED = false;
-        public static final double MAX_SPEED = 3;
+        public static final double MAX_SPEED = 4.8;
+        public static final double MAX_ANGULAR_SPEED = 2 * Math.PI;
     }
 }

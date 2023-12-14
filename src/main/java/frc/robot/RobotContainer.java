@@ -38,6 +38,8 @@ public class RobotContainer {
   private final XboxController buttonsController = new XboxController(OperatorConstants.kButtonsControllerPort);
 
   private final JoystickButton driverA = new JoystickButton(driverController, XboxController.Button.kA.value);
+  private final JoystickButton driverB = new JoystickButton(driverController, XboxController.Button.kB.value);
+
   private final JoystickButton buttonsA = new JoystickButton(buttonsController, XboxController.Button.kA.value);
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
@@ -56,8 +58,8 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    driverA.whileTrue(new ShooterShoot(shooterSub));
-    driverA.whileFalse(new ShooterStop(shooterSub));
+    driverA.onTrue(new ShooterShoot(shooterSub));
+    driverB.onTrue(new ShooterStop(shooterSub));
     // driverA.onTrue(new ShooterShoot(shooterSub));
     // driverA.onFalse(new ShooterStop(shooterSub));
     // Schedule `ExampleCommand` when `exampleCondition` changes to `true`

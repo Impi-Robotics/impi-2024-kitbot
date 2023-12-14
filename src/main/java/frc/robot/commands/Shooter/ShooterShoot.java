@@ -15,8 +15,10 @@ public class ShooterShoot extends InstantCommand {
 
   @Override
   public void initialize() {
-    shooterSub.shoot(ShooterConstants.Main.FullRPM);
+    // shooterSub.shoot(ShooterConstants.Main.FullRPM);
     // System.out.println("A");
     // shooterSub.shoot5000();
+    shooterSub.dashboardShoot();
+    //shooterSub.shoot(0);
   }
 }

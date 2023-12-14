@@ -16,70 +16,77 @@ import edu.wpi.first.wpilibj2.command.SubsystemBase;
 
 public class ShooterSub extends SubsystemBase {
 
+  private double dashboardShooterRPM = 0.0;
   //Master
-  private CANSparkMax ShooterMotorMaster;
+  private CANSparkMax shooterMotorMaster;
   //Follower
-  private CANSparkMax ShooterMotorFollower;
+  private CANSparkMax shooterMotorFollower;
 
-  private SparkMaxPIDController ShooterPIDController;
+  private SparkMaxPIDController shooterPIDController;
 
-  private RelativeEncoder ShooterEncoder;
+  private RelativeEncoder shooterEncoder;
 
+  private double dashboardShooterSetpoint = 0;
+  
   public ShooterSub() {
-    this.ShooterMotorMaster = ShooterMotorMaster;
-    this.ShooterMotorFollower = ShooterMotorFollower;
-    this.ShooterPIDController = ShooterPIDController;
-    this.ShooterEncoder = ShooterEncoder;
 
-    ShooterMotorMaster = new CANSparkMax(1, MotorType.kBrushless);
-    ShooterMotorFollower = new CANSparkMax(2, MotorType.kBrushless);
+    shooterMotorMaster = new CANSparkMax(9, MotorType.kBrushless);
+    shooterMotorFollower = new CANSparkMax(2, MotorType.kBrushless);
 
-    ShooterPIDController = ShooterMotorMaster.getPIDController();
+    shooterPIDController = shooterMotorMaster.getPIDController();
 
-    ShooterMotorMaster.restoreFactoryDefaults();
-    ShooterMotorFollower.restoreFactoryDefaults();
+    shooterMotorMaster.restoreFactoryDefaults();
+    shooterMotorFollower.restoreFactoryDefaults();
 
 
-    ShooterMotorMaster.setSmartCurrentLimit(ShooterConstants.Main.CurrentLimit);
-    ShooterMotorFollower.setSmartCurrentLimit(ShooterConstants.Main.CurrentLimit);
-    ShooterMotorMaster.setIdleMode(IdleMode.kCoast);
-    ShooterMotorFollower.follow(ShooterMotorMaster, true);
+    shooterMotorMaster.setSmartCurrentLimit(ShooterConstants.Main.CurrentLimit);
+    shooterMotorFollower.setSmartCurrentLimit(ShooterConstants.Main.CurrentLimit);
+    shooterMotorMaster.setIdleMode(IdleMode.kCoast);
+    shooterMotorFollower.follow(shooterMotorMaster, true);
 
-    ShooterEncoder = ShooterMotorMaster.getEncoder();
-    // ShooterEncoder.setPositionConversionFactor(0);
-    // ShooterEncoder.setVelocityConversionFactor(0);
+    shooterEncoder = shooterMotorMaster.getEncoder();
+    // shooterEncoder.setPositionConversionFactor(0);
+    // shooterEncoder.setVelocityConversionFactor(0);
 
-    ShooterPIDController.setOutputRange(0, 1);
+    shooterPIDController.setOutputRange(0, 1);
 
-    ShooterPIDController.setP(ShooterConstants.Main.ShooterP);
-    ShooterPIDController.setI(ShooterConstants.Main.ShooterI);
-    ShooterPIDController.setD(ShooterConstants.Main.ShooterD);
-    ShooterPIDController.setFF(ShooterConstants.Main.ShooterFF);
+    shooterPIDController.setP(ShooterConstants.Main.ShooterP);
+    shooterPIDController.setI(ShooterConstants.Main.ShooterI);
+    shooterPIDController.setD(ShooterConstants.Main.ShooterD);
+    shooterPIDController.setFF(ShooterConstants.Main.ShooterFF);
 
-    ShooterMotorMaster.burnFlash();
-    ShooterMotorFollower.burnFlash();
+    shooterMotorMaster.burnFlash();
+    shooterMotorFollower.burnFlash();
   }
 
   @Override
   public void periodic() {
-    SmartDashboard.putNumber("Current RPM: ", getCurrentRPM());
+    dashboardShooterSetpoint = SmartDashboard.getNumber("Dashboard Shooter", shooterEncoder.getVelocity());
+    SmartDashboard.putNumber("Dashboard Shooter", dashboardShooterSetpoint);
+    SmartDashboard.putNumber("Dashboard Shooter RPM:", getCurrentRPM());
+    // dashboardShooterRPM = SmartDashboard.getNumber("Dashboard Shooter RPM:", getCurrentRPM());
+    // shooterPIDController.setReference(dashboardShooterRPM, ControlType.kVelocity);
     // This method will be called once per scheduler run
   }
 
+  public void dashboardShoot(){
+		shooterPIDController.setReference(dashboardShooterSetpoint, ControlType.kVelocity);
+	}
+
   public void shoot5000() {
-    ShooterPIDController.setReference(1000/*5000rpm?*/, ControlType.kVelocity);
+    shooterPIDController.setReference(ShooterConstants.Main.FullRPM/*5000rpm?*/, ControlType.kVelocity);
   }
 
   public void shoot(double rpm) {
-    ShooterMotorMaster.set(0.5);
-    // ShooterPIDController.setReference(rpm, ControlType.kVelocity);
+    shooterMotorMaster.set(0.5);
+    // shooterPIDController.setReference(rpm, ControlType.kVelocity);
   }
 
   public void stop() {
-    ShooterMotorMaster.set(0);
+    shooterMotorMaster.set(0.);
   }
 
   public double getCurrentRPM(){
-    return ShooterEncoder.getVelocity();
+    return shooterEncoder.getVelocity();
   }
 }

@@ -7,7 +7,13 @@ package frc.robot;
 import frc.robot.Constants.OperatorConstants;
 import frc.robot.commands.Autos;
 import frc.robot.commands.ExampleCommand;
+import frc.robot.commands.RobotOrientedDriveCommand;
+import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.subsystems.ExampleSubsystem;
+
+import java.util.function.DoubleSupplier;
+
+import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
@@ -20,18 +26,29 @@ import edu.wpi.first.wpilibj2.command.button.Trigger;
  */
 public class RobotContainer {
   // The robot's subsystems and commands are defined here...
+  private final DriveSubsystem driveSubsystem = new DriveSubsystem();
   private final ExampleSubsystem m_exampleSubsystem = new ExampleSubsystem();
 
   // Replace with CommandPS4Controller or CommandJoystick if needed
-  private final CommandXboxController m_driverController =
-      new CommandXboxController(OperatorConstants.kDriverControllerPort);
+  // Xbox Controller Stuff
+  private final XboxController driverController = new XboxController(OperatorConstants.kDriverControllerPort);
+  private final XboxController buttonsController = new XboxController(OperatorConstants.kButtonsControllerPort);
 
+  private final DoubleSupplier buttonsLeftJoystickX = () -> buttonsController.getLeftX();
+  private final DoubleSupplier buttonsLeftJoystickY = () -> buttonsController.getLeftY();
+  private final DoubleSupplier buttonsLeftTrigger = () -> buttonsController.getLeftTriggerAxis();
+  private final DoubleSupplier buttonsRightJoystickX = () -> buttonsController.getRightX();
+  private final DoubleSupplier buttonsRightJoystickY = () -> buttonsController.getRightY();
+  private final DoubleSupplier buttonsRightTrigger = () -> buttonsController.getRightTriggerAxis();
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
     configureBindings();
   }
 
+  // public void setDefaultCommands() {
+  //   driveSubsystem.setDefaultCommand(new RobotOrientedDriveCommand(STUFFFFFF));
+  // }
   /**
    * Use this method to define your trigger->command mappings. Triggers can be created via the
    * {@link Trigger#Trigger(java.util.function.BooleanSupplier)} constructor with an arbitrary
@@ -48,7 +65,6 @@ public class RobotContainer {
 
     // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
     // cancelling on release.
-    m_driverController.b().whileTrue(m_exampleSubsystem.exampleMethodCommand());
   }
 
   /**

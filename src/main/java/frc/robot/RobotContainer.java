@@ -13,9 +13,13 @@ import frc.robot.subsystems.ExampleSubsystem;
 
 import java.util.function.DoubleSupplier;
 
+import edu.wpi.first.math.MathUtil;
 import edu.wpi.first.wpilibj.XboxController;
+import edu.wpi.first.wpilibj.PS4Controller.Button;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.RunCommand;
 import edu.wpi.first.wpilibj2.command.button.CommandXboxController;
+import edu.wpi.first.wpilibj2.command.button.JoystickButton;
 import edu.wpi.first.wpilibj2.command.button.Trigger;
 
 /**
@@ -34,6 +38,9 @@ public class RobotContainer {
   private final XboxController driverController = new XboxController(OperatorConstants.kDriverControllerPort);
   private final XboxController buttonsController = new XboxController(OperatorConstants.kButtonsControllerPort);
 
+  private final DoubleSupplier driverLeftJoystickX = () -> driverController.getLeftX();
+  private final DoubleSupplier driverLeftJoystickY = () -> driverController.getLeftY();
+
   private final DoubleSupplier buttonsLeftJoystickX = () -> buttonsController.getLeftX();
   private final DoubleSupplier buttonsLeftJoystickY = () -> buttonsController.getLeftY();
   private final DoubleSupplier buttonsLeftTrigger = () -> buttonsController.getLeftTriggerAxis();
@@ -43,7 +50,16 @@ public class RobotContainer {
   /** The container for the robot. Contains subsystems, OI devices, and commands. */
   public RobotContainer() {
     // Configure the trigger bindings
+
     configureBindings();
+
+    driveSubsystem.setDefaultCommand(
+      new RunCommand(() -> driveSubsystem.drive(
+        -MathUtil.applyDeadband(driverController.getLeftY(), SwerveConstants.MISC.DRIVE_DEADBAND),  
+        -MathUtil.applyDeadband(driverController.getLeftX(), SwerveConstants.MISC.DRIVE_DEADBAND),
+        -MathUtil.applyDeadband(driverController.getRightX(), SwerveConstants.MISC.DRIVE_DEADBAND),
+        true, true), driveSubsystem)); 
+    
   }
 
   // public void setDefaultCommands() {
@@ -59,12 +75,7 @@ public class RobotContainer {
    * joysticks}.
    */
   private void configureBindings() {
-    // Schedule `ExampleCommand` when `exampleCondition` changes to `true`
-    new Trigger(m_exampleSubsystem::exampleCondition)
-        .onTrue(new ExampleCommand(m_exampleSubsystem));
-
-    // Schedule `exampleMethodCommand` when the Xbox controller's B button is pressed,
-    // cancelling on release.
+    //new JoystickButton(driverController, Button.kR1.value).whileTrue(new RunCommand(null, null))
   }
 
   /**
